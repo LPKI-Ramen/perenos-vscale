@@ -1,0 +1,14 @@
+---
+- name: vscl to vpc conf
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Print OS info
+    debug: var={{ item }}
+    loop:
+      - ansible_distribution
+      - ansible_distribution_release
+      - ansible_os_family
+      - ansible_lsb
+      - ansible_distribution_major_version
