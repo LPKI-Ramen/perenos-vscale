@@ -81,12 +81,6 @@
 
       - block: #=====cloud-init configs=====#
 
-        - name: copy Ubuntu_16.04 config files
-          copy:
-            src: "./ubuntu_16.04_cloud_cfg/"
-            dest: "/etc/cloud/cloud.cfg.d/"
-            directory_mode: yes
-
         - name: copy ubuntu_16 config files
           copy:
             src: "{{ item.src }}"
@@ -135,7 +129,7 @@
 
       - name: copy Grub config files
         copy:
-          src: "./grub_ubuntu.txt"
+          src: "./templates/ubuntu_16.04/grub_ubuntu.txt"
           dest: "/etc/default/grub"
           force: yes
         notify: "Write grub"
