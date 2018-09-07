@@ -1,10 +1,5 @@
 ---
 # handlers file for ubuntu_16.04
-- name: Restart server
-  shell: sleep 4 && reboot now
-  async: 1
-  poll: 0
-  ignore_errors: true
 
 - name: Write grub configuration file
   command: grub-mkconfig -o /boot/grub/grub.cfg
@@ -13,4 +8,11 @@
 
 - name: print result grub conf
   debug: var=command_output
+  listen: "Write grub"
+
+- name: Restart server
+  shell: sleep 4 && reboot now
+  async: 1
+  poll: 0
+  #ignore_errors: true
   listen: "Write grub"

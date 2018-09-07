@@ -24,7 +24,10 @@
   loop:
     - scarlet-init-early.service
     - scarlet-init.service
-    ignore_errors: yes
+  ignore_errors: yes
+
+- name: Wait for dpkg unlock
+  shell: "while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 5; done;"
 
 - name: Uninstall scarlet-init
   apt: 
@@ -72,3 +75,23 @@
     - '99_keep_root_user.cfg'
     - '99_location.cfg'
     - '99_ssh_settings.cfg'
+
+- name: Service cloud-init start
+  service: 
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+    - qemu-guest-agent
+    - cloud-init
+    - cloud-init-local
+    - cloud-config
+    - cloud-final
+  #notify: Restart server
+
+- name: copy Grub config files
+  copy:
+    src: "grub_ubuntu.txt"
+    dest: "/etc/default/grub"
+    force: yes
+  notify: "Write grub"
