@@ -1,0 +1,8 @@
+---
+- name: vscl to vpc conf
+  hosts: all
+
+  roles:
+    - { role: ubuntu_16.04, when: ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial }
+
+    
