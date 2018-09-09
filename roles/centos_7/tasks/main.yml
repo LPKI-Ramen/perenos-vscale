@@ -1,2 +1,108 @@
 ---
 # tasks file for centos_7
+
+- name: Add Selectel repository
+  yum_repository:
+    name: selectel-openstack
+    baseurl: http://repo.os.selectel.org/rpm/centos/7/x86_64
+    gpgkey: http://repo.os.selectel.org/selectel-openstack.key
+    gpgcheck: yes
+    enabled: yes
+    description: selectel-openstack
+    state: present
+
+- name: Remove Vscale repository (and clean up left-over metadata)
+  yum_repository:
+    name: vscale
+    state: absent
+    enabled: no
+  notify: yum-clean-metadata
+
+- name: disable services
+  systemd: 
+    name: "{{ item }}"
+    state: stopped
+    enabled: no
+    daemon_reload: yes
+  loop:
+    - scarlet-init-early.service
+    - scarlet-init.service
+    - scarlet-nsd.service
+  ignore_errors: true
+
+- name: Centos uninstall scarlet-init
+  yum:
+    name: "{{ item }}"
+    state: absent
+    update_cache: yes
+  with_items:
+    - scarlet-init
+    - scarlet-nsd
+          
+- name: del scarlet folders
+  file: 
+    path: "{{ item }}" 
+    state: absent
+  with_items:
+    - /var/log/scarlet-init/
+    - /var/lib/scarlet-init/
+    - /etc/scarlet-init
+    - /usr/lib/scarlet-init
+    - /etc/init/scarlet-init.override
+    - /etc/init/scarlet-init-early.override
+    - /sys/fs/cgroup/devices/system.slice/scarlet-nsd.service
+    - /sys/fs/cgroup/systemd/system.slice/scarlet-nsd.service
+    - /etc/systemd/system/default.target.wants/scarlet-nsd.service
+    - /etc/systemd/system/scarlet-nsd.service
+    - /usr/sbin/scarlet-nsd
+    - /usr/share/man/man1/scarlet-nsd.1.gz
+
+- name: Centos install cloud-init
+  yum:
+    name: "{{ item }}"
+    state: present
+    #update_cache: yes
+  with_items:
+    - python34
+    - crontab-randomizer
+    - dhclient-selectel-hooks
+    - set-root-pw
+    - fstrim-blocks
+    - qemu-guest-agent
+    - qemu-img
+    - cloud-init
+    - cloud-utils
+    - cloud-utils-growpart
+
+- name: copy Centos_7 config files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ dst_cloud_cfg }}"
+  with_items:
+    - '10_no_default_users.cfg'
+    - '91-dib-cloud-init-datasources.cfg'
+    - '92-ec2-datasource.cfg'
+    - '99_boot_routines.cfg'
+    - '99_enable_ec2.cfg'
+    - '99_first_boot_routines.cfg'
+    - '99_keep_root_user.cfg'
+    - '99_location.cfg'
+    - '99_ssh_settings.cfg'
+    
+- name: Service cloud-init start
+  systemd: 
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+    - cloud-init
+    - cloud-init-local
+    - cloud-config
+    - cloud-final
+  #notify: Restart server
+
+- name: copy Grub config files
+  copy:
+    src: "grub_defaults.cfg"
+    dest: "/etc/default/grub"
+  notify: "Write grub"

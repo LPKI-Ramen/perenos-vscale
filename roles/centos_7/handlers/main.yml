@@ -1,2 +1,22 @@
 ---
 # handlers file for centos_7
+- name: yum-clean-metadata
+  command: yum clean metadata
+  args:
+    warn: no
+
+- name: Write grub configuration file
+  command: grub2-mkconfig -o /boot/grub2/grub.cfg
+  register: command_output
+  listen: "Write grub"
+
+- name: print result grub conf
+  debug: var=command_output.stderr_lines
+  listen: "Write grub"
+
+- name: Restart server
+  shell: sleep 4 && reboot now
+  async: 1
+  poll: 0
+  #ignore_errors: true
+  listen: "Write grub"

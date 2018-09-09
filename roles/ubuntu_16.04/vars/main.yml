@@ -1,2 +1,6 @@
 ---
 # vars file for ubuntu_16.04
+# ansible_python_interpreter: /usr/bin/python3
+# ansible_ssh_user: root
+# ansible_become: yes
+# ansible_become_user: root
