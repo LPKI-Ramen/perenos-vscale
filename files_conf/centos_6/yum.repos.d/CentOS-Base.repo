@@ -1,0 +1,31 @@
+[base]
+name=CentOS-$releasever base
+baseurl=http://mirror.selectel.ru/centos/$releasever/os/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-$releasever
+
+[updates]
+name=CentOS-$releasever updates
+baseurl=http://mirror.selectel.ru/centos/$releasever/updates/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-$releasever
+
+[extras]
+name=CentOS-$releasever extras
+baseurl=http://mirror.selectel.ru/centos/$releasever/extras/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-$releasever
+
+[centosplus]
+name=CentOS-$releasever plus
+baseurl=http://mirror.selectel.ru/centos/$releasever/centosplus/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-$releasever
+enabled=0
+
+[contrib]
+name=CentOS-$releasever contrib
+baseurl=http://mirror.selectel.ru/centos/$releasever/centosplus/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-$releasever
+enabled=0

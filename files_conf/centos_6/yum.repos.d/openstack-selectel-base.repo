@@ -1,0 +1,5 @@
+[openstack-selectel-base]
+name=openstack-selectel-base
+baseurl=http://mirror.os.selectel.ru/centos
+gpgcheck=1
+gpgkey=http://mirror.os.selectel.ru/centos/RPM-GPG-KEY-openstack
