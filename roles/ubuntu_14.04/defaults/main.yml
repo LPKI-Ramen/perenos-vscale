@@ -1,2 +1,3 @@
 ---
 # defaults file for ubuntu_14.04
+dst_cloud_cfg: /etc/cloud/cloud.cfg.d

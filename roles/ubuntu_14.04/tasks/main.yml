@@ -1,2 +1,99 @@
 ---
 # tasks file for ubuntu_14.04
+
+- name: Add signing key
+  apt_key:
+    url: http://repo.os.selectel.org/selectel-openstack.key
+    state: present
+
+- apt_repository:
+    repo: deb http://repo.vscale.io/ trusty main
+    state: absent
+
+- apt_repository:
+    repo: deb http://repo.os.selectel.org trusty main
+    state: present
+    update_cache: yes
+
+- name: disable services
+  service: 
+    name: "{{ item }}"
+    state: stopped
+    enabled: no
+  loop:
+    - scarlet-init-early
+    - scarlet-init
+  ignore_errors: yes
+
+- name: Wait for dpkg unlock
+  shell: "while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 5; done;"
+
+- name: Uninstall scarlet-init
+  apt: 
+    name: scarlet-init
+    state: absent
+    autoremove: yes
+    purge: yes
+
+- name: del scarlet folders
+  file: 
+    path: "{{ item }}" 
+    state: absent
+  with_items:
+    - /var/log/scarlet-init/
+    - /var/lib/scarlet-init/
+    - /etc/init/scarlet-init.override
+    - /etc/init/scarlet-init-early.override
+        
+- name: Install cloud-init
+  apt: 
+    name: "{{ item }}"
+    state: present
+    force: yes
+    #allow_unauthenticated: yes
+    install_recommends: yes
+  with_items:
+    - set-root-pw
+    - fstrim-blocks
+    - crontab-randomizer
+    - qemu-guest-agent
+    - cloud-init
+    - net-tools
+
+- name: copy ubuntu_16 config files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ dst_cloud_cfg }}"
+  with_items:
+    - 10_no_default_users.cfg
+    - 90_dpkg.cfg
+    - 91-dib-cloud-init-datasources.cfg
+    - 92-ec2-datasource.cfg
+    - 99_enable_ec2.cfg
+    - 99_first_boot_routines.cfg
+    - 99_keep_root_user.cfg
+    - 99_location.cfg
+    - 99_selectel_mirror.cfg
+    - 99_ssh_settings.cfg
+
+
+- name: Service cloud-init start
+  service: 
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+    - qemu-guest-agent
+    - cloud-init
+    - cloud-init-local
+    # - cloud-config
+    # - cloud-final
+  #notify: Restart server
+
+- name: copy Grub config files
+  copy:
+    src: "grub-ubuntu14"
+    dest: "/etc/default/grub"
+    force: yes
+    backup: yes
+  notify: "Write grub"
