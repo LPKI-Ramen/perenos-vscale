@@ -86,7 +86,7 @@
     - qemu-guest-agent
     - cloud-init
     - cloud-init-local
-    # - cloud-config
+    - cloud-init-nonet
     # - cloud-final
   #notify: Restart server
 
