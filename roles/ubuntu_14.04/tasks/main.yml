@@ -86,8 +86,9 @@
     - qemu-guest-agent
     - cloud-init
     - cloud-init-local
-    - cloud-init-nonet
-    # - cloud-final
+    #- cloud-init-nonet
+    - cloud-config
+    - cloud-final
   #notify: Restart server
 
 - name: copy Grub config files
