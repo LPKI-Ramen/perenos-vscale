@@ -76,6 +76,22 @@
     - 99_selectel_mirror.cfg
     - 99_ssh_settings.cfg
 
+- name: add include to network config
+  lineinfile:
+    path: /etc/network/interfaces
+    state: present
+    line: source /etc/network/interfaces.d/*.cfg
+  check_mode: yes
+  register: check_source_in_interfaces_conf
+  
+- name: add block include to network config
+  blockinfile:
+    path: /etc/network/interfaces
+    state: present
+    marker: ""
+    block: |
+      source /etc/network/interfaces.d/*.cfg
+  when: check_source_in_interfaces_conf.changed == true
 
 - name: Service cloud-init start
   service: 
@@ -86,9 +102,9 @@
     - qemu-guest-agent
     - cloud-init
     - cloud-init-local
-    #- cloud-init-nonet
-    - cloud-config
-    - cloud-final
+    - cloud-init-nonet
+    #- cloud-config
+    #- cloud-final
   #notify: Restart server
 
 - name: copy Grub config files
