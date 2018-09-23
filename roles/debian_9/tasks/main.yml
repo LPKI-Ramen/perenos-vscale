@@ -44,7 +44,7 @@
     - /var/lib/scarlet-init/
     - /etc/init/scarlet-init.override
     - /etc/init/scarlet-init-early.override
-        
+ 
 - name: Install cloud-init
   apt: 
     name: "{{ item }}"

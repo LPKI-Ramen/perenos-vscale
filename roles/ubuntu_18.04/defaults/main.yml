@@ -1,2 +1,4 @@
 ---
 # defaults file for ubuntu_18.04
+
+dst_cloud_cfg: /etc/cloud/cloud.cfg.d
