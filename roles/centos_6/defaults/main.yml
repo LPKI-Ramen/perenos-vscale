@@ -1,2 +1,3 @@
 ---
 # defaults file for centos_6
+dst_cloud_cfg: /etc/cloud/cloud.cfg.d

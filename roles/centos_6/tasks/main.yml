@@ -1,2 +1,120 @@
 ---
 # tasks file for centos_6
+- name: Add Selectel repository base
+  yum_repository:
+    name: openstack-selectel-base
+    baseurl: http://mirror.os.selectel.ru/centos
+    gpgkey: http://mirror.os.selectel.ru/centos/RPM-GPG-KEY-openstack
+    gpgcheck: yes
+    enabled: yes
+    description: openstack-selectel-base
+    state: present
+
+- name: Add Selectel repository 
+  yum_repository:
+    name: openstack-selectel-updates
+    baseurl: http://repo.os.selectel.org/rpm/centos/6.9/x86_64
+    gpgkey: http://repo.os.selectel.org/selectel-openstack.key
+    gpgcheck: yes
+    enabled: yes
+    description: openstack-selectel-updates
+    state: present
+
+- name: Remove Vscale repository (and clean up left-over metadata)
+  yum_repository:
+    name: vscale
+    state: absent
+    enabled: no
+  notify: yum-clean-metadata
+
+- name: disable services
+  service: 
+    name: "{{ item }}"
+    state: stopped
+    enabled: no
+  loop:
+    - scarlet-init-early
+    - scarlet-init
+  ignore_errors: true
+
+- name: Centos uninstall scarlet-init
+  yum:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - scarlet-nsd
+    #- scarlet-init
+
+- name: Uninstall scarlet-init
+  shell: yum --setopt=tsflags=noscripts remove -y scarlet-init
+          
+- name: del scarlet folders
+  file: 
+    path: "{{ item }}" 
+    state: absent
+  with_items:
+    - /var/log/scarlet-init/
+    - /var/lib/scarlet-init/
+    - /etc/scarlet-init
+    - /usr/lib/scarlet-init
+    - /etc/init/scarlet-init.override
+    - /etc/init/scarlet-init-early.override
+    - /sys/fs/cgroup/devices/system.slice/scarlet-nsd.service
+    - /sys/fs/cgroup/systemd/system.slice/scarlet-nsd.service
+    - /etc/systemd/system/default.target.wants/scarlet-nsd.service
+    - /etc/systemd/system/scarlet-nsd.service
+    - /usr/sbin/scarlet-nsd
+    - /usr/share/man/man1/scarlet-nsd.1.gz
+
+- name: Centos install cloud-init
+  yum:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - python34
+    - dhclient
+    - set-root-pw
+    - qemu-guest-agent
+    - qemu-img
+    - cloud-init
+    - cloud-utils
+    - cloud-utils-growpart
+    - redhat-lsb-core
+    - scarlet-init
+    - scarlet-nsd
+
+- name: copy Centos config files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ dst_cloud_cfg }}"
+  with_items:
+    - 10_no_default_users.cfg
+    - 91-dib-cloud-init-datasources.cfg
+    - 99_boot_routines.cfg
+    - 99_enable_ec2.cfg
+    - 99_first_boot_routines.cfg
+    - 99_keep_root_user.cfg
+    - 99_location.cfg
+    - 99_scarlet-init-compat.cfg
+    - 99_ssh_settings.cfg
+    
+- name: Service cloud-init start
+  service: 
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+    - cloud-init
+    - cloud-init-local
+    - cloud-config
+    - cloud-final
+    - scarlet-init
+    - scarlet-nsd
+  #notify: Restart server
+
+# - name: copy Grub config files
+#   copy:
+#     src: "grub_defaults.cfg"
+#     dest: "/etc/default/grub"
+#   notify: "Write grub"
