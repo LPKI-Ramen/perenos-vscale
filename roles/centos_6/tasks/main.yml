@@ -37,14 +37,6 @@
     - scarlet-init
   ignore_errors: true
 
-- name: Centos uninstall scarlet-init
-  yum:
-    name: "{{ item }}"
-    state: absent
-  with_items:
-    - scarlet-nsd
-    #- scarlet-init
-
 - name: Uninstall scarlet-init
   shell: yum --setopt=tsflags=noscripts remove -y scarlet-init
           
@@ -72,10 +64,9 @@
     state: present
     update_cache: yes
   with_items:
-    - python34
+    #- python34
     - dhclient
     - set-root-pw
-    - qemu-guest-agent
     - qemu-img
     - cloud-init
     - cloud-utils
@@ -110,6 +101,7 @@
     - cloud-config
     - cloud-final
     - scarlet-init
+    - scarlet-init-early
     - scarlet-nsd
   #notify: Restart server
 
