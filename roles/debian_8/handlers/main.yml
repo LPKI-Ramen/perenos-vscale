@@ -1,2 +1,18 @@
 ---
 # handlers file for debian_8
+
+- name: Write grub configuration file
+  command: grub-mkconfig -o /boot/grub/grub.cfg
+  register: command_output
+  listen: "Write grub"
+
+- name: print result grub conf
+  debug: var=command_output
+  listen: "Write grub"
+
+- name: Restart server
+  shell: sleep 4 && reboot now
+  async: 1
+  poll: 0
+  #ignore_errors: true
+  listen: "Write grub"

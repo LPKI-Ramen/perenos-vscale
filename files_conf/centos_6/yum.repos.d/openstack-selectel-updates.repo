@@ -1,5 +1,0 @@
-[openstack-selectel-updates]
-name=openstack-selectel-updates
-baseurl=http://repo.os.selectel.org/rpm/centos/6.9/x86_64
-gpgcheck=1
-gpgkey=http://repo.os.selectel.org/selectel-openstack.key

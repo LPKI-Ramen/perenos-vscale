@@ -4,12 +4,10 @@
 #   info -f grub -n 'Simple configuration'
 
 GRUB_DEFAULT=0
-GRUB_HIDDEN_TIMEOUT=2
-GRUB_HIDDEN_TIMEOUT_QUIET=true
 GRUB_TIMEOUT=2
 GRUB_DISTRIBUTOR=`lsb_release -i -s 2> /dev/null || echo Debian`
-GRUB_CMDLINE_LINUX_DEFAULT="console=tty1 console=ttyS0 nofb nomodeset  consoleblank=0 panic=15 clocksource_failover=acpi_pm net.ifnames=0 biosdevname=0"
-GRUB_CMDLINE_LINUX=" nofb nomodeset  consoleblank=0 panic=15 clocksource_failover=acpi_pm net.ifnames=0 biosdevname=0"
+GRUB_CMDLINE_LINUX_DEFAULT="quiet nofb nomodeset  consoleblank=0 panic=15 clocksource_failover=acpi_pm"
+GRUB_CMDLINE_LINUX=" nofb nomodeset  consoleblank=0 panic=15 clocksource_failover=acpi_pm"
 
 # Uncomment to enable BadRAM filtering, modify to suit your needs
 # This works with Linux (no patch required) and with any kernel that obtains
@@ -39,5 +37,5 @@ GRUB_GFXPAYLOAD=640x480
 GRUB_TIMEOUT=2
 GRUB_TERMINAL="serial console"
 GRUB_GFXPAYLOAD_LINUX=640x480
-GRUB_CMDLINE_LINUX_DEFAULT="console=tty0 console=ttyS0,115200 no_timer_check nofb nomodeset  consoleblank=0 panic=15 clocksource_failover=acpi_pm net.ifnames=0 biosdevname=0"
+GRUB_CMDLINE_LINUX_DEFAULT="console=tty0 console=ttyS0,115200 no_timer_check nofb nomodeset  consoleblank=0 panic=15 clocksource_failover=acpi_pm"
 GRUB_SERIAL_COMMAND="serial --speed=115200 --unit=0 --word=8 --parity=no --stop=1"
