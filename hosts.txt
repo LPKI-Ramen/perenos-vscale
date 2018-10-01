@@ -11,7 +11,7 @@ ansible_ssh_private_key = ~/id_rsa.pub  #указываем ключик по у
 
 [ubuntu_servers:vars]
 #закомментить для старых систем, типа 14.04
-ansible_python_interpreter = /usr/bin/python3 
+ansible_python_interpreter = /usr/bin/python3
 
 ansible_ssh_user = root
 ansible_become = yes
